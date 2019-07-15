@@ -26,7 +26,7 @@ function love.update(dt)
   elseif (love.keyboard.isDown('up') and currentDirection ~= 'down') then
     currentDirection = 'up'
   elseif (love.keyboard.isDown('down') and currentDirection ~= 'up') then
-    currentDirection = 'down'
+    currentDirection = 'down'    
   end
 
   tick = tick + dt * 1000
@@ -48,7 +48,9 @@ function love.update(dt)
       end
       count = count + 1               
     end
-    table.remove(snake, count)
+    if count > snakeLength then        
+      table.remove(snake, count)
+    end
     tick = 0
   end
 end
