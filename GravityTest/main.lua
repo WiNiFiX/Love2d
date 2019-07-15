@@ -27,7 +27,14 @@ function love.load()
     player.gravity = -500        -- Whenever the character falls, he will descend at this rate.
         
 	bulletSpeed = 250 
-	bullets = {}
+    bullets = {}
+    
+    myShader = love.graphics.newShader([[
+    vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
+      vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
+      return pixel * color;
+    }
+  ]])
 end
  
 function love.update(dt)
@@ -72,13 +79,22 @@ function love.draw()
     -- The platform will now be drawn as a white rectangle while taking in the variables we declared above.
     love.graphics.rectangle('fill', platform.x, platform.y, platform.width, platform.height)
     
+    love.graphics.setShader(myShader) --draw something here
     -- This draws the player.
     love.graphics.draw(player.img, player.x, player.y, 0, 1, 1, 0, player.img:getHeight())
-    
+    love.graphics.setShader()
+
 	love.graphics.setColor(0.5, 0.5, 0.5)
 	for i,v in ipairs(bullets) do
 		love.graphics.circle("fill", v.x, v.y, 5)
-	end
+    end
+    
+    --love.graphics.setColor(0.5, 0.5, 0.5, 1) -- single dark color
+	--love.graphics.rectangle("fill", 0, 0, platform.width, platform.height) 
+    --love.graphics.setBlendMode("subtract")
+    
+    
+    
 end
 
 function love.mousepressed(x, y, button)
