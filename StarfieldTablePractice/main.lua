@@ -27,7 +27,7 @@ end
 
 function love.draw()  
   for i,v in ipairs(stars) do
-    love.graphics.setColor(v.r, v.g, v.b)
+    love.graphics.setColor(v.r, v.g, v.b, v.alpha)
 		love.graphics.circle("fill", v.x, v.y, 2)
   end
   
@@ -48,7 +48,7 @@ function spawnStars()
 		local starDx = starSpeed * math.cos(angle)
 		local starDy = starSpeed * math.sin(angle)
  
-		table.insert(stars, {x = startX, y = startY, dx = starDx, dy = starDy, angle = angle, r = math.random(), g = math.random(), b = math.random()})	
+		table.insert(stars, {x = startX, y = startY, dx = starDx, dy = starDy, alpha = math.random(), r = math.random(), g = math.random(), b = math.random()})	
 end
 
 function distance ( x1, y1, x2, y2 )
