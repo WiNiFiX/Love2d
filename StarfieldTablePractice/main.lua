@@ -1,5 +1,6 @@
 local maxStars = 1000
 local starSpeed = 200
+local maxRadius = 50
 local startX, startY, screenX, screenY = 0
 local screenCanvas
 
@@ -22,7 +23,7 @@ function love.update(dt)
     
 		v.x = v.x + (starDx * dt)
     v.y = v.y + (starDy * dt)
-    if (distance(v.x, v.y, startX, startY) > 300) then
+    if (distance(v.x, v.y, startX, startY) > maxRadius) then
     --if (v.x < 0 or v.x > screenX or v.y < 0 or v.y > screenY) then                
       table.remove(stars, i)
     end
