@@ -1,16 +1,17 @@
 local direction = 'right'
-local blockSize = 40
+local blockSize = 20
 local speed = 200 -- ms
 local currentDirection = 'right'
+local snakeLength = 5
 
 function love.load()      
   screenWidth, screenHeight = love.graphics.getDimensions()    
   snake = {}
-  for i = 0, 4 do
+  for i = 0, snakeLength do
     local calcX = math.floor(screenWidth / 2 / blockSize)
     local calcY = math.floor(screenHeight / 2 / blockSize)    
     
-    table.insert(snake, {x = (calcX - i) * blockSize, y = calcY * blockSize, position = i, parentDirection = 'right' })            
+    table.insert(snake, {x = (calcX - i) * blockSize, y = calcY * blockSize })            
   end
   loaded = true
 end
@@ -30,19 +31,24 @@ function love.update(dt)
 
   tick = tick + dt * 1000
   if tick >= speed then
+    local count = 0
     for i, v in pairs(snake) do
-      if (v.position == 0) then -- we move the header of the snake, segments behind must follow     
+      if (count == 0) then -- we generate a new header of the snake, segments behind will follow naturally
+        local newX, newY = v.x, v.y
         if currentDirection == 'right' then
-          v.x = v.x + blockSize
+          newX = newX + blockSize          
         elseif currentDirection == 'left' then
-          v.x = v.x - blockSize
+          newX = newX - blockSize
         elseif currentDirection == 'up' then
-          v.y = v.y - blockSize
+          newY = newY - blockSize
         elseif currentDirection == 'down' then
-          v.y = v.y + blockSize          
-        end  
+          newY = newY + blockSize          
+        end
+        table.insert(snake, 1, {x = newX, y = newY})                    
       end
+      count = count + 1               
     end
+    table.remove(snake, count)
     tick = 0
   end
 end
