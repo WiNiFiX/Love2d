@@ -15,16 +15,11 @@ function love.update(dt)
   spawnStars()
 
   for i,v in ipairs(stars) do
-
-    local angle = math.random(0, 360)
- 
-		local starDx = starSpeed * math.cos(angle)
-    local starDy = starSpeed * math.sin(angle)
+   
+		v.x = v.x + (v.dx * dt)
+    v.y = v.y + (v.dy * dt)
     
-		v.x = v.x + (starDx * dt)
-    v.y = v.y + (starDy * dt)
-    if (distance(v.x, v.y, startX, startY) > maxRadius) then
-    --if (v.x < 0 or v.x > screenX or v.y < 0 or v.y > screenY) then                
+    if (v.x < 0 or v.x > screenX or v.y < 0 or v.y > screenY) then                
       table.remove(stars, i)
     end
 	end
