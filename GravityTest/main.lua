@@ -3,6 +3,8 @@ platform = {}
 player = {}  -- Add this below the platform variable
  
 function love.load()
+    love.graphics.setBackgroundColor(0.21, 0.67, 0.97) 
+
     -- This is the height and the width of the platform.
 	platform.width = love.graphics.getWidth()    -- This makes the platform as wide as the whole game window.
 	platform.height = love.graphics.getHeight()  -- This makes the platform as tall as the whole game window.
@@ -22,7 +24,10 @@ function love.load()
     player.ground = player.y -- This makes the character land on the plaform.     
 	player.y_velocity = 0        -- Whenever the character hasn't jumped yet, the Y-Axis velocity is always at 0. 
 	player.jump_height = -300    -- Whenever the character jumps, he can reach this height.
-	player.gravity = -500        -- Whenever the character falls, he will descend at this rate.
+    player.gravity = -500        -- Whenever the character falls, he will descend at this rate.
+        
+	bulletSpeed = 250 
+	bullets = {}
 end
  
 function love.update(dt)
@@ -53,6 +58,11 @@ function love.update(dt)
     if player.y > player.ground then                                -- The game checks if the player has jumped.
 		player.y_velocity = 0                                       -- The Y-Axis Velocity is set back to 0 meaning the character is on the ground again.
     	player.y = player.ground                                    -- The Y-Axis Velocity is set back to 0 meaning the character is on the ground again.
+    end
+    
+    for i,v in ipairs(bullets) do
+		v.x = v.x + (v.dx * dt)
+		v.y = v.y + (v.dy * dt)
 	end
 end
  
@@ -63,5 +73,26 @@ function love.draw()
     love.graphics.rectangle('fill', platform.x, platform.y, platform.width, platform.height)
     
     -- This draws the player.
-	love.graphics.draw(player.img, player.x, player.y, 0, 1, 1, 0, player.img:getHeight())
+    love.graphics.draw(player.img, player.x, player.y, 0, 1, 1, 0, player.img:getHeight())
+    
+	love.graphics.setColor(0.5, 0.5, 0.5)
+	for i,v in ipairs(bullets) do
+		love.graphics.circle("fill", v.x, v.y, 5)
+	end
+end
+
+function love.mousepressed(x, y, button)
+	if button == 1 then
+		local startX = player.x + player.img:getWidth() / 2
+		local startY = player.y - player.img:getHeight() / 2
+		local mouseX = x
+		local mouseY = y
+ 
+		local angle = math.atan2((mouseY - startY), (mouseX - startX))
+ 
+		local bulletDx = bulletSpeed * math.cos(angle)
+		local bulletDy = bulletSpeed * math.sin(angle)
+ 
+		table.insert(bullets, {x = startX, y = startY, dx = bulletDx, dy = bulletDy})
+	end
 end
