@@ -1,3 +1,5 @@
+require "bloom"
+
 local direction = 'right'
 local blockSize = 20
 local speed = 100 -- ms
@@ -7,6 +9,9 @@ local foodCount = 1
 
 function love.load()      
   screenWidth, screenHeight = love.graphics.getDimensions()    
+  bloom = CreateBloomEffect( screenWidth / 2, screenHeight / 2 )
+  bloom:debugDraw(true)
+  if bloom then print('Bloom effect returned true') end
   snake = {}  
   for i = 0, snakeLength do
     local calcX = math.floor(screenWidth / 2 / blockSize)
@@ -83,14 +88,14 @@ function love.draw()
 end
 
 function spawnNewFood()    
-    -- place the food in a random location on screen 
-    -- TODO: so does not land ontop of any snake body part
+    -- place the food in a random location on screen     
     
     for i, v in pairs(food) do      
       if v.respawn == true then        
         local calcX = (math.floor(math.random(0, screenWidth) / blockSize) - 1) * blockSize
         local calcY = math.floor(math.random(0, screenHeight) / blockSize) * blockSize
         
+        -- while it is on a snake body part, spawn again
         while isFoodOnSnake(calcX, calcY) do
           calcX = (math.floor(math.random(0, screenWidth) / blockSize) - 1) * blockSize
           calcY = math.floor(math.random(0, screenHeight) / blockSize) * blockSize
@@ -123,9 +128,29 @@ function isFoodOnSnake(calcX, calcY)
 end
 
 function drawSnake()
+  if (bloom ~= nil) then    
+    bloom:predraw()
+    bloom:enabledrawtobloom()  
+  end
+
   for i, v in pairs(snake) do
-    love.graphics.setColor(1, 0.1 * i % 1, 0.1 * i % 1, 1 / i * (snakeLength - 2))
+    local red = 1
+    local green = 0.1 * i % 1
+    local blue = 0.1 * i % 1
+    local alpha = 1 / i * (snakeLength - 2)
+
+    love.graphics.setColor(red, green, blue, alpha)
     love.graphics.rectangle("fill", v.x, v.y, blockSize - 1, blockSize - 1)
+
+    -- this adds a semi glowy effect around the snake
+    love.graphics.setColor(0, 0, 1, 0.3)
+    love.graphics.rectangle("fill", v.x - 2, v.y - 2, blockSize + 4, blockSize + 4)
+
+    love.graphics.setColor(1, 1, 1, 0.1)
+    love.graphics.rectangle("fill", v.x - 3, v.y - 3, blockSize + 6, blockSize + 6)
+  end
+  if (bloom ~= nil) then
+    bloom:postdraw()
   end
 end
 
@@ -134,6 +159,13 @@ function drawFood()
     if v.respawn == false then -- we must only draw food if it is not "eaten" aka marked to respawn      
       love.graphics.setColor(1, 1, 0, 1)
       love.graphics.rectangle("fill", v.x, v.y, blockSize - 1, blockSize - 1)
+
+      -- this adds a semi glowy effect around the food
+      love.graphics.setColor(0, 0, 1, 0.3)
+      love.graphics.rectangle("fill", v.x - 2, v.y - 2, blockSize + 4, blockSize + 4)
+
+      love.graphics.setColor(1, 1, 1, 0.1)
+      love.graphics.rectangle("fill", v.x - 3, v.y - 3, blockSize + 6, blockSize + 6)
     end
   end
 end
@@ -153,3 +185,6 @@ function drawFPS(x, y)
   love.graphics.print("FPS: "..tostring(love.timer.getFPS()), x, y)  
 end
 
+-- SUGGESTIONS
+-- 1. Because there is no death by colision like in the original game, you could change the challenge from dexterity to efficiency. 
+--    By that, I mean that instead of dying by touching yourself or the borders, you could simply add a short timer to reach the next fruit
