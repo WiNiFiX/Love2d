@@ -1,5 +1,3 @@
-require "bloom"
-
 local direction = 'right'
 local blockSize = 20
 local speed = 100 -- ms
@@ -9,9 +7,6 @@ local foodCount = 1
 
 function love.load()      
   screenWidth, screenHeight = love.graphics.getDimensions()    
-  bloom = CreateBloomEffect( screenWidth / 2, screenHeight / 2 )
-  bloom:debugDraw(true)
-  if bloom then print('Bloom effect returned true') end
   snake = {}  
   for i = 0, snakeLength do
     local calcX = math.floor(screenWidth / 2 / blockSize)
@@ -79,17 +74,14 @@ function love.update(dt)
   end
 end
 
-function love.draw()    
-  bloom:predraw()
-  bloom:enabledrawtobloom()  
+function love.draw()      
 
   drawGrid()
   drawSnake()  
   isFoodEaten()
   drawFood()  
   drawFPS(15, 15)
-
-  bloom:postdraw()
+  
 end
 
 function spawnNewFood()    
