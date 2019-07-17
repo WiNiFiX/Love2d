@@ -80,11 +80,16 @@ function love.update(dt)
 end
 
 function love.draw()    
+  bloom:predraw()
+  bloom:enabledrawtobloom()  
+
   drawGrid()
   drawSnake()  
   isFoodEaten()
   drawFood()  
   drawFPS(15, 15)
+
+  bloom:postdraw()
 end
 
 function spawnNewFood()    
@@ -128,11 +133,7 @@ function isFoodOnSnake(calcX, calcY)
 end
 
 function drawSnake()
-  if (bloom ~= nil) then    
-    bloom:predraw()
-    bloom:enabledrawtobloom()  
-  end
-
+  
   for i, v in pairs(snake) do
     local red = 1
     local green = 0.1 * i % 1
@@ -148,10 +149,7 @@ function drawSnake()
 
     love.graphics.setColor(1, 1, 1, 0.1)
     love.graphics.rectangle("fill", v.x - 3, v.y - 3, blockSize + 6, blockSize + 6)
-  end
-  if (bloom ~= nil) then
-    bloom:postdraw()
-  end
+  end  
 end
 
 function drawFood()

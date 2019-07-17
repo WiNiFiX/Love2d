@@ -154,6 +154,7 @@ function CreateBloomEffect(xsize, ysize)
    local debugdraw = false
    
    function bloom:refresh(xs, ys)
+      print('refresh start')
       xs, ys = math.floor(xs+0.5), math.floor(ys+0.5)
       
       local renderingtoscene = false
@@ -177,10 +178,8 @@ function CreateBloomEffect(xsize, ysize)
          bloomscene = love.graphics.newCanvas(self.po2xres, self.po2yres),
       }
       
-      for k,v in pairs(self.canvas) do         
-         --table.clear(self.canvas, k)
-         v.clear()
-         --v:clear()
+      for k,v in pairs(self.canvas) do                           
+         v:renderTo(love.graphics.clear)         
       end
       
       shaders.blur_horiz:send("canvas_w", self.po2xsize)
@@ -194,6 +193,7 @@ function CreateBloomEffect(xsize, ysize)
       end
       
       collectgarbage("collect")
+      print('refresh end')
    end
    
    function bloom:debugDraw(shoulddebugdraw)
@@ -235,7 +235,7 @@ function CreateBloomEffect(xsize, ysize)
    -- call right before drawing the stuff you want bloomed
    function bloom:predraw()
       for k,v in pairs(self.canvas) do
-         --v:clear()
+         v:renderTo(love.graphics.clear)         
       end
       love.graphics.setCanvas(self.canvas.scene)
       
@@ -281,11 +281,11 @@ function CreateBloomEffect(xsize, ysize)
       love.graphics.setShader()
       
       if debugdraw then
-         -- love.graphics.setColor(255, 255, 255, 128)
+         love.graphics.setColor(255, 255, 255, 128)
          love.graphics.draw(self.canvas.bloom, 0, 0)
          love.graphics.draw(self.canvas.blur_horiz, self.po2xsize+4, 0)
          love.graphics.draw(self.canvas.blur_vert, self.po2xsize*2+8, 0)
-         -- love.graphics.draw(self.canvas.blur_vert, 0, 0, 0, self.po2xres/self.po2xsize, self.po2yres/self.po2ysize)
+         love.graphics.draw(self.canvas.blur_vert, 0, 0, 0, self.po2xres/self.po2xsize, self.po2yres/self.po2ysize)
       end
       
       love.graphics.setBlendMode(blendmode)
